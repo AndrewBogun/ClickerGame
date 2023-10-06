@@ -6,20 +6,30 @@ using UnityEngine.UI;
 
 namespace Game
 {
-    public class InitialWindow : Window
+    public class InitialWindow : ScreenBase
     {
-        [SerializeField] private GameObject _visualRoot;
         [SerializeField] private TMP_Text _textTitle;
         [SerializeField] private Button _confirmButton;
         [SerializeField] private TMP_Text _buttonText;
-        [SerializeField] private GameObject _buttonBlock;
-        [SerializeField] private InputField _inputField;
+        [SerializeField] private TMP_InputField _inputField;
 
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
+            _inputField.onValueChanged.AddListener(value =>
+            {
+                if (value.Length > 0)
+                {
+                    _confirmButton.interactable = true;
+                }
+            });
+            
             if (_confirmButton != null)
             {
+                _confirmButton.interactable = false;
+                
                 _confirmButton.onClick.AddListener(() =>
                 {
                     if (_inputField.text.Length > 0)
@@ -28,11 +38,6 @@ namespace Game
                     }
                 });
             }
-        }
-
-        private void OnEnable()
-        {
-            throw new NotImplementedException();
         }
     }
 }

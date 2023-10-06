@@ -15,6 +15,10 @@ namespace Game
             {
                 SetGameState(GameStates.Init);
             }
+            else
+            {
+                SetGameState(GameStates.Search);
+            }
         }
 
         private void SetGameState(GameStates gameState)
@@ -25,7 +29,7 @@ namespace Game
     
     public static partial class GameKeys
     {
-        public static string PlayerName;
+        public static string PlayerName = "PlayerName";
     }
 
     public enum GameStates
