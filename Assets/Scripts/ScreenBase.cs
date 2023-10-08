@@ -33,11 +33,12 @@ namespace Game
         
         private readonly ReactiveProperty<bool> _isActive = new();
 
-        private readonly CompositeDisposable _compositeDisposable = new();
+        protected readonly CompositeDisposable _compositeDisposable = new();
         
         protected readonly Subject<ScreenBase> _onShow = new Subject<ScreenBase>();
 
         protected readonly Subject<ScreenBase> _onHide = new Subject<ScreenBase>();
+        
 
         protected bool IsActive
         {
@@ -99,6 +100,7 @@ namespace Game
         protected void OnDestroy()
         {
             _fadeDelayDisposable?.Dispose();
+            _compositeDisposable?.Dispose();
         }
 
 

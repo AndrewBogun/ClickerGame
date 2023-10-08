@@ -1,12 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System;
 using TMPro;
 using UniRx;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 
 namespace Game
@@ -22,92 +17,56 @@ namespace Game
         [SerializeField] private Button _searchButton;
         [SerializeField] private Button _battleButton;
 
-        private readonly CompositeDisposable _compositeDisposable = new();
-
+        private BattleManager _battleManager;
+        private GameController _gameController;
 
         protected override void Awake()
         {
             base.Awake();
+
+            _battleManager = FindObjectOfType<BattleManager>();
+            _gameController = FindObjectOfType<GameController>();
+
+            _battleManager.CurrentEnemy.Subscribe(enemy =>
+            {
+                if (enemy != null)
+                {
+                    _enemyName.text = enemy.Name;
+                    _enemyAvatar.texture = enemy.Avatar;
+                }
+            }).AddTo(_compositeDisposable);
         
             _onShow.Subscribe(async _ =>
             {
-                var response = await MakeRequest();
-                ProcessResult(response);
-                Debug.Log(response);
+                SearchEnemy();
+                _playerName.text = PlayerPrefs.GetString(GameKeys.PlayerName);
+                _playerSoft.text = PlayerPrefs.GetInt(GameKeys.PlayerSoft).ToString();
             }).AddTo(_compositeDisposable);
-        }
 
-        private void ProcessResult(string webJson)
-        {
-            if (!string.IsNullOrWhiteSpace(webJson))
+            if (_searchButton != null)
             {
-                var result = JsonConvert.DeserializeObject<EnemyInfo>(webJson);
-
-                if (result != null)
-                {
-                    _enemyName.text = result.results[0].name.first;
-                    StartCoroutine(LoadImage(result.results[0].picture.large));
-                }
+                _searchButton.onClick.AddListener(SearchEnemy);
             }
-        }
-        
-        private IEnumerator LoadImage(string url)
-        {
-            using (UnityWebRequest www = UnityWebRequestTexture.GetTexture(url))
+
+            if (_battleButton != null)
             {
-                yield return www.SendWebRequest();
-
-                if (www.isNetworkError || www.isHttpError)
+                _battleButton.onClick.AddListener(() =>
                 {
-                    Debug.Log(www.error);
-                }
-                else
-                {
-                    // Создаем текстуру из загруженных данных
-                    Texture2D texture = DownloadHandlerTexture.GetContent(www);
-
-                    // Помещаем текстуру в RawImage
-                    _enemyAvatar.texture = texture;
-                }
+                    _gameController.SetGameState(GameStates.Fight);
+                });
             }
         }
 
-        private async Task<string> MakeRequest()
+        private async void SearchEnemy()
         {
-            using (HttpClient client = new HttpClient())
-            {
-                var url = "https://randomuser.me/api/";
-                HttpResponseMessage response = await client.GetAsync(url);
-            
-                string responseBody = await response.Content.ReadAsStringAsync();
-            
-                return responseBody;
-            }
+            _loadingRoot.SetActive(true);
+            await _battleManager.GetEnemy();
+            _loadingRoot.SetActive(false);
         }
-    }
 
-    public class Name
-    {
-        public string title { get; set; }
-        public string first { get; set; }
-        public string last { get; set; }
-    }
-
-    public class Picture
-    {
-        public string large { get; set; }
-        public string medium { get; set; }
-        public string thumbnail { get; set; }
-    }
-
-    public class Result
-    {
-        public Name name { get; set; }
-        public Picture picture { get; set; }
-    }
-
-    public class EnemyInfo
-    {
-        public Result[] results { get; set; }
+        private void OnDisable()
+        {
+            _compositeDisposable.Clear();
+        }
     }
 }

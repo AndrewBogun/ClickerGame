@@ -8,22 +8,19 @@ namespace Game
 {
     public class InitialWindow : ScreenBase
     {
-        [SerializeField] private TMP_Text _textTitle;
         [SerializeField] private Button _confirmButton;
-        [SerializeField] private TMP_Text _buttonText;
         [SerializeField] private TMP_InputField _inputField;
 
 
         protected override void Awake()
         {
             base.Awake();
+
+            var gameController = FindObjectOfType<GameController>();
             
             _inputField.onValueChanged.AddListener(value =>
             {
-                if (value.Length > 0)
-                {
-                    _confirmButton.interactable = true;
-                }
+                _confirmButton.interactable = value.Length > 0;
             });
             
             if (_confirmButton != null)
@@ -35,6 +32,11 @@ namespace Game
                     if (_inputField.text.Length > 0)
                     {
                         PlayerPrefs.SetString(GameKeys.PlayerName, _inputField.text);
+
+                        if (gameController != null)
+                        {
+                            gameController.SetGameState(GameStates.Search);
+                        }
                     }
                 });
             }

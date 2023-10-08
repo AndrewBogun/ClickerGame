@@ -21,7 +21,7 @@ namespace Game
             }
         }
 
-        private void SetGameState(GameStates gameState)
+        public void SetGameState(GameStates gameState)
         {
             _gameState.Value = gameState;
         }
@@ -29,7 +29,8 @@ namespace Game
     
     public static partial class GameKeys
     {
-        public static string PlayerName = "PlayerName";
+        public static readonly string PlayerName = "PlayerName";
+        public static readonly string PlayerSoft = "PlayerSoft";
     }
 
     public enum GameStates
