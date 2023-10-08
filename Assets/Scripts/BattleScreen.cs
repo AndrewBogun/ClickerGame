@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UniRx;
 using UnityEngine;
@@ -23,6 +24,11 @@ namespace Game
 
             _battleManager = FindObjectOfType<BattleManager>();
 
+            _onShow.Subscribe(_ =>
+            {
+                _enemyAvatar.transform.localScale = Vector3.one;
+            }).AddTo(_compositeDisposable);
+
             _battleManager.CurrentEnemy.Subscribe(enemy =>
             {
                 _enemyCompositeDisposable.Clear();
@@ -30,9 +36,11 @@ namespace Game
                 {
                     _enemyAvatar.texture = enemy.Avatar;
                     _enemyName.text = enemy.Name;
-
+                    _enemyHpBar.maxValue = enemy.HP.Value;
+                    _enemyHpBar.minValue = 0f;
                     enemy.HP.Subscribe(hp =>
                     {
+                        _enemyHpBar.value = hp;
                         _enemyHp.text = hp.ToString();
                     }).AddTo(_enemyCompositeDisposable);
                 }
@@ -43,6 +51,7 @@ namespace Game
                 _attackButton.onClick.AddListener(() =>
                 {
                     _battleManager.AttackCurrentEnemy();
+                    _enemyAvatar.transform.DOShakeScale(0.3f, 0.3f);
                 });
             }
         }

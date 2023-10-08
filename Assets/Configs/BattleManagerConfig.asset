@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 511c3c6d24659499ebafdfbef89516f7, type: 3}
   m_Name: BattleManagerConfig
   m_EditorClassIdentifier: 
-  _minEnemyHp: 0
-  _maxEnemyHp: 0
-  _minReward: 0
-  _maxReward: 0
+  _minEnemyHp: 50
+  _maxEnemyHp: 100
+  _minAttackDamage: 5
+  _maxAttackDamage: 10
+  _minReward: 100
+  _maxReward: 1000

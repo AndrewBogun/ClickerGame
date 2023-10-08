@@ -25,6 +25,14 @@ namespace Game
         {
             _gameState.Value = gameState;
         }
+
+        public void ReceiveReward(int rewardAmount)
+        {
+            var playerSoftCount = PlayerPrefs.GetInt(GameKeys.PlayerSoft);
+            PlayerPrefs.SetInt(GameKeys.PlayerSoft, playerSoftCount + rewardAmount);
+            
+            SetGameState(GameStates.Search);
+        }
     }
     
     public static partial class GameKeys

@@ -5,34 +5,26 @@ namespace Game
     [CreateAssetMenu(fileName = "BattleManagerConfig", menuName = "Configs/BattleManagerConfig", order = 1)]
     public class BattleManagerConfig : ScriptableObject
     {
-        [SerializeField, Range(50, 100)] private int _minEnemyHp;
-        [SerializeField, Range(50, 100)] private int _maxEnemyHp;
-        [SerializeField, Range(50, 100)] private int _minAttackDamage;
-        [SerializeField, Range(50, 100)] private int _maxAttackDamage;
+        [SerializeField] private int _minEnemyHp = 50;
+        [SerializeField] private int _maxEnemyHp = 100;
+        [SerializeField] private int _minAttackDamage = 5;
+        [SerializeField] private int _maxAttackDamage = 10;
         [SerializeField] private int _minReward;
         [SerializeField] private int _maxReward;
 
         public int GetEnemyHp()
         {
-            return Random.Range(_minEnemyHp, _maxEnemyHp);
+            return Random.Range(_minEnemyHp, _maxEnemyHp + 1);
         }
 
         public int GetEnemyReward()
         {
-            return Random.Range(_minReward, _maxReward);
+            return Random.Range(_minReward, _maxReward + 1);
         }
 
         public int GetAttackDamage()
         {
-            return Random.Range(_minAttackDamage, _maxAttackDamage);
-        }
-
-        private void OnValidate()
-        {
-            if (_minEnemyHp > _maxEnemyHp)
-            {
-                _minEnemyHp = _maxEnemyHp - 1;
-            }
+            return Random.Range(_minAttackDamage, _maxAttackDamage + 1);
         }
     }
 }

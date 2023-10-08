@@ -23,17 +23,16 @@ namespace Game
         private void Awake()
         {
             _gameController = FindObjectOfType<GameController>();
-            
+
             _curEnemy.Subscribe(enemy =>
             {
                 _enemyCompositeDisposable.Clear();
                 if (enemy != null)
                 {
-                    enemy.IsDead.Subscribe(isdDead =>
+                    enemy.IsDead.Subscribe(isDead =>
                     {
-                        if (isdDead)
+                        if (isDead)
                         {
-                            _curEnemy.Value = null;
                             _gameController.SetGameState(GameStates.Result);
                         }
                     }).AddTo(_enemyCompositeDisposable);
@@ -123,47 +122,42 @@ namespace Game
         }
     }
 
-    public class Enemy : IDisposable
+    public class Enemy
     {
         private ReactiveProperty<int> _hp = new();
-
         public IReadOnlyReactiveProperty<int> HP => _hp;
 
-        private readonly ReactiveProperty<bool> _isDead = new();
+        private readonly ReactiveProperty<bool> _isDead = new(false);
         
         public IReadOnlyReactiveProperty<bool> IsDead => _isDead;
         public string Name { get; set; }
         public Texture2D Avatar { get; set; }
         public int Reward { get; set; }
 
-        private readonly CompositeDisposable _compositeDisposable = new();
-        public Enemy()
-        {
-            _hp.Subscribe(hp =>
-            {
-                if (hp <= 0)
-                {
-                    _isDead.Value = true;
-                }
-            }).AddTo(_compositeDisposable);
-        }
 
         public void TakeDamage(int damage)
         {
             if (damage > 0 && _hp.Value > 0)
             {
-                _hp.Value -= damage;
+                if (damage >= _hp.Value)
+                {
+                    _hp.Value = 0;
+                }
+                else
+                {
+                    _hp.Value -= damage; 
+                }
+            }
+
+            if (_hp.Value <= 0)
+            {
+                _isDead.Value = true;
             }
         }
 
         public void SetHp(int healsPoints)
         {
             _hp.Value = healsPoints;
-        }
-
-        public void Dispose()
-        {
-            _compositeDisposable?.Dispose();
         }
     }
     
