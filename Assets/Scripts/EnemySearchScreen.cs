@@ -40,7 +40,7 @@ namespace Game
             {
                 SearchEnemy();
                 _playerName.text = PlayerPrefs.GetString(GameKeys.PlayerName);
-                _playerSoft.text = PlayerPrefs.GetInt(GameKeys.PlayerSoft).ToString();
+                _playerSoft.text = PlayerPrefs.GetInt(GameKeys.PlayerSoft).ToString("N0");
             }).AddTo(_compositeDisposable);
 
             if (_searchButton != null)

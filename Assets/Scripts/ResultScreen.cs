@@ -32,7 +32,7 @@ namespace Game
                 {
                     _finalText.text = $"Бой с {enemy.Name}";
                     _reward = enemy.Reward;
-                    _rewardCount.text = _reward.ToString();
+                    _rewardCount.text = _reward.ToString("0,00");
                 }
             }).AddTo(_compositeDisposable);
 
