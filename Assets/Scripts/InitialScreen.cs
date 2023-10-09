@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Game
 {
-    public class InitialWindow : ScreenBase
+    public class InitialScreen : ScreenBase
     {
         [SerializeField] private Button _confirmButton;
         [SerializeField] private TMP_InputField _inputField;
